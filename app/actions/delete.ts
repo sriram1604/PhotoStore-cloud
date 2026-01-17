@@ -31,8 +31,15 @@ export async function deleteImage(imageId: string) {
   // 2. Collaborator check
   else if (image.folderId) {
       const folder = await Folder.findById(image.folderId);
-      if (folder && folder.sharedWith && folder.sharedWith.includes(userId)) {
-          canDelete = true;
+      if (folder && folder.sharedWith) {
+          // New Schema Check: Array of Objects
+          const isEditor = folder.sharedWith.some((s: any) => {
+              // Backward compatibility check
+              if (typeof s === 'string') return s === userId;
+              return s.userId === userId && s.role === 'editor';
+          });
+          
+          if (isEditor) canDelete = true;
       }
   }
 

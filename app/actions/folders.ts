@@ -148,9 +148,9 @@ export async function getBreadcrumbs(folderId: string) {
     let currentId: string | undefined = folderId;
 
     while (currentId) {
-        const folder = await Folder.findById(currentId);
+        const folder: IFolder | null = await Folder.findById(currentId);
         if (!folder) break;
-        crumbs.unshift({ id: folder._id.toString(), name: folder.name });
+        crumbs.unshift({ id: folder._id ? folder._id.toString() : "", name: folder.name });
         currentId = folder.parentFolderId ? folder.parentFolderId.toString() : undefined;
     }
     
